@@ -28,50 +28,51 @@ namespace VychMat
         private int _currentMargin = 20;
         private int _number;
         public static int PointsNumber { get; set; }
+
         private void PlaceElementGroup()
         {
             _pointNumberLabels.Add(new Label
-            {
-                Content = _number.ToString(),
-                Margin = new Thickness(_currentMargin, 0, 0, 0),
-                Height = 25,
-                Width = 25,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Top
+                                       {
+                                           Content = _number.ToString(),
+                                           Margin = new Thickness(_currentMargin, 0, 0, 0),
+                                           Height = 25,
+                                           Width = 25,
+                                           HorizontalAlignment = HorizontalAlignment.Left,
+                                           VerticalAlignment = VerticalAlignment.Top
 
-            });
+                                       });
             var tb = new TextBox
-            {
-                Margin = new Thickness(_currentMargin, 35, 0, 0),
-                Height = 25,
-                Width = 25,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Top
-            };
+                         {
+                             Margin = new Thickness(_currentMargin, 35, 0, 0),
+                             Height = 25,
+                             Width = 25,
+                             HorizontalAlignment = HorizontalAlignment.Left,
+                             VerticalAlignment = VerticalAlignment.Top
+                         };
             tb.TextChanged += TextBoxTextChanged;
             _pointXBoxes.Add(tb);
             tb = new TextBox
-            {
-                Margin = new Thickness(_currentMargin, 70, 0, 0),
-                Height = 25,
-                Width = 25,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Top
-            };
+                     {
+                         Margin = new Thickness(_currentMargin, 70, 0, 0),
+                         Height = 25,
+                         Width = 25,
+                         HorizontalAlignment = HorizontalAlignment.Left,
+                         VerticalAlignment = VerticalAlignment.Top
+                     };
             tb.TextChanged += TextBoxTextChanged;
             _pointYBoxes.Add(tb);
             _currentMargin += 50;
             _number++;
         }
 
-        void InitializeLists()
+        private void InitializeLists()
         {
             _pointNumberLabels = new List<Label>();
             _pointXBoxes = new List<TextBox>();
             _pointYBoxes = new List<TextBox>();
         }
 
-        void RemoveAllElements()
+        private void RemoveAllElements()
         {
             for (var i = 0; i < PointsNumber; i++)
             {
@@ -81,7 +82,7 @@ namespace VychMat
             }
         }
 
-        void PlaceElements()
+        private void PlaceElements()
         {
             _currentMargin = 20;
             _number = 0;
@@ -111,7 +112,7 @@ namespace VychMat
             PlaceElements();
         }
 
-        void ApplyButtonClick(object sender, RoutedEventArgs e)
+        private void ApplyButtonClick(object sender, RoutedEventArgs e)
         {
             FindCoefButton.IsEnabled = false;
             try
@@ -126,7 +127,8 @@ namespace VychMat
                 }
                 else
                 {
-                    MessageBox.Show("Введите число узлов от 2 до 10", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Введите число узлов от 2 до 10", "Ошибка", MessageBoxButton.OK,
+                                    MessageBoxImage.Error);
                 }
             }
             catch (FormatException exception)
@@ -135,7 +137,7 @@ namespace VychMat
             }
         }
 
-        void TextBoxTextChanged(object sender, TextChangedEventArgs e)
+        private void TextBoxTextChanged(object sender, TextChangedEventArgs e)
         {
             try
             {
@@ -157,6 +159,5 @@ namespace VychMat
                 FindCoefButton.IsEnabled = false;
             }
         }
-
     }
 }
