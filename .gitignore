@@ -1,2 +1,4 @@
-
 *.suo
+bin/
+obj/
+_ReSharper.VychMat
