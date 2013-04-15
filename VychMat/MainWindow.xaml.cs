@@ -1,18 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Microsoft.Research.DynamicDataDisplay;
 using DevExpress.Xpf.Charts;
 
 namespace VychMat
@@ -90,7 +79,10 @@ namespace VychMat
             _pointYBoxes = new List<TextBox>();
             _cLabels = new List<Label>();
             Chart.Diagram.Series.Add(new LineSeries2D());
+            Chart.Diagram.Series[0].DisplayName = "f(x)";
+            Chart.Diagram.Series[0].LabelsVisibility = true;
             Chart.Diagram.Series.Add(new LineSeries2D());
+            Chart.Diagram.Series[1].DisplayName = "φ(x)";
         }
 
         private void RemoveAllElements()
@@ -183,8 +175,7 @@ namespace VychMat
                 }
                 FindCoefButton.IsEnabled = true;
                 FindCoefButtonClick(this, e);
-                for(var i = 0; i < PointsNumber; i++)
-                    Chart.Diagram.Series[0].Points.Add(new SeriesPoint((double)_xValues[i], (double)_yValues[i]));
+
             }
             catch (FormatException exception)
             {
@@ -245,17 +236,7 @@ namespace VychMat
             //    SolutionBlock.Inlines.Add(ssruns[i]);
             //}
             //MessageBox.Show(s);
-            double px = -10;
-            for(var i = 0; i < 30; i++)
-            {
-                double py = 0;
-                for (var j = 0; j < PointsNumber; j++)
-                {
-                    py = py + c[j]*Math.Pow(px, j);
-                }
-                Chart.Diagram.Series[1].Points.Add(new SeriesPoint(px, py));
-               px = px + 0.666;
-            }
+            Plot(c);
         }
 
         private void RandomButton_Click(object sender, RoutedEventArgs e)
@@ -267,6 +248,56 @@ namespace VychMat
                 _pointYBoxes[i].Text = Math.Round((rnd.NextDouble() * 20 - 10), 2).ToString();
             }
             TextBoxTextChanged(this, null);
+        }
+
+        private void OptimalButton_Click(object sender, RoutedEventArgs e)
+        {
+            var a = Convert.ToDouble(SegmentBeginBox.Text);
+            var b = Convert.ToDouble(SegmentEndBox.Text);
+            for(var i = 0; i < PointsNumber; i++)
+            {
+                _pointXBoxes[i].Text = (Math.Round((((a + b)/2) + ((b - a)/2)*
+                    Math.Cos(((2*i + 1)*Math.PI) / (2*PointsNumber + 2))), 3)).ToString();
+            }
+            TextBoxTextChanged(this, null);
+        }
+
+        private void OptimalSegmentTextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                Convert.ToDouble(SegmentBeginBox.Text);
+                Convert.ToDouble(SegmentEndBox.Text);
+                OptimalButton.IsEnabled = true;
+            }
+            catch (Exception)
+            {
+                OptimalButton.IsEnabled = false;
+            }
+        }
+        
+        private void Plot(double[] c)
+        {
+            var minX = 1.7e308;
+            var maxX = 5.0e-324;
+            for (var i = 0; i < PointsNumber; i++)
+            {
+                Chart.Diagram.Series[0].Points.Add(new SeriesPoint((double) _xValues[i], (double) _yValues[i]));
+                minX = (double) _xValues[i] < minX ? (double) _xValues[i] : minX;
+                maxX = (double) _xValues[i] > maxX ? (double) _xValues[i] : maxX;
+            }
+            var step = (maxX - minX)/30;
+            var px = minX;
+            for (var i = 0; i < 30; i++)
+            {
+                double py = 0;
+                for (var j = 0; j < PointsNumber; j++)
+                {
+                    py = py + c[j] * Math.Pow(px, j);
+                }
+                Chart.Diagram.Series[1].Points.Add(new SeriesPoint(px, py));
+                px = px + step;
+            }
         }
     }
 }
