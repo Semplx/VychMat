@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using DevExpress.Xpf.Charts;
 
 namespace VychMat
@@ -19,8 +20,6 @@ namespace VychMat
         private double?[] _yValues;
         private int _currentMargin = 20;
         private int _number;
-        private const int PlotPointsNumber = 30;
-        private const double PointXStep = 20/PlotPointsNumber;
         public static int PointsNumber { get; set; }
 
         private void PlaceElementGroup()
@@ -298,6 +297,13 @@ namespace VychMat
                 Chart.Diagram.Series[1].Points.Add(new SeriesPoint(px, py));
                 px = px + step;
             }
+        }
+
+        private void XYDiagram2D_MouseDown_1(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var position = e.GetPosition(diagram);
+            var dc = diagram.PointToDiagram(position);
+            StatusText.Text = dc.NumericalArgument.ToString() + " " + dc.NumericalValue.ToString();
         }
     }
 }
