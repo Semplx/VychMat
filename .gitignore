@@ -1,4 +1,6 @@
 *.suo
 bin/
 obj/
-_ReSharper.VychMat
+_ReSharper.VychMat/
+
+.DS_Store
