@@ -18,8 +18,10 @@ namespace VychMat
         private List<Label> _cLabels; 
         private double?[] _xValues;
         private double?[] _yValues;
+        private int _currentBox;
         private int _currentMargin = 20;
         private int _number;
+        private bool _plotted = false;
         public static int PointsNumber { get; set; }
 
         private void PlaceElementGroup()
@@ -43,6 +45,7 @@ namespace VychMat
                              VerticalAlignment = VerticalAlignment.Top
                          };
             tb.TextChanged += TextBoxTextChanged;
+            tb.PreviewMouseDown += TextBoxMouseDown;
             _pointXBoxes.Add(tb);
             tb = new TextBox
                      {
@@ -53,6 +56,7 @@ namespace VychMat
                          VerticalAlignment = VerticalAlignment.Top
                      };
             tb.TextChanged += TextBoxTextChanged;
+            tb.PreviewMouseDown += TextBoxMouseDown;
             _pointYBoxes.Add(tb);
             var lb = new Label
                          {
@@ -82,6 +86,9 @@ namespace VychMat
             Chart.Diagram.Series[0].LabelsVisibility = true;
             Chart.Diagram.Series.Add(new LineSeries2D());
             Chart.Diagram.Series[1].DisplayName = "φ(x)";
+            Chart.Diagram.Series.Add(new PointSeries2D());
+            diagram.Series[2].LabelsVisibility = true;
+            _plotted = false;
         }
 
         private void RemoveAllElements()
@@ -128,9 +135,16 @@ namespace VychMat
 
         private void ApplyButtonClick(object sender, RoutedEventArgs e)
         {
+            _plotted = false;
+            _currentBox = 0;
+            diagram.AxisX.Range.MinValue = -10;
+            diagram.AxisX.Range.MaxValue = 10;
+            diagram.AxisY.Range.MinValue = -10;
+            diagram.AxisY.Range.MaxValue = 10;
             //SolutionBlock.Inlines.Clear();
             Chart.Diagram.Series[0].Points.Clear();
             Chart.Diagram.Series[1].Points.Clear();
+            diagram.Series[2].Points.Clear();
             FindCoefButton.IsEnabled = false;
             try
             {
@@ -277,6 +291,10 @@ namespace VychMat
         
         private void Plot(double[] c)
         {
+            _plotted = true;
+            diagram.Series[2].Points.Clear();
+            diagram.AxisX.Range = new AxisRange();
+            diagram.AxisY.Range = new AxisRange();
             var minX = 1.7e308;
             var maxX = 5.0e-324;
             for (var i = 0; i < PointsNumber; i++)
@@ -299,11 +317,39 @@ namespace VychMat
             }
         }
 
-        private void XYDiagram2D_MouseDown_1(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void XYDiagram2D_MouseDown_1(object sender, MouseButtonEventArgs e)
         {
             var position = e.GetPosition(diagram);
             var dc = diagram.PointToDiagram(position);
-            StatusText.Text = dc.NumericalArgument.ToString() + " " + dc.NumericalValue.ToString();
+            var x = Math.Round(dc.NumericalArgument, 2);
+            var y = Math.Round(dc.NumericalValue, 2);
+            StatusText.Text = x.ToString() + " " + y.ToString();
+            _pointXBoxes[_currentBox].Text = x.ToString();
+            _pointYBoxes[_currentBox].Text = y.ToString();
+            if(!_plotted)
+                diagram.Series[2].Points.Add(new SeriesPoint(x, y));
+            if(_currentBox != PointsNumber - 1)
+                _currentBox++;
+        }
+
+        private void TextBoxMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            for(var i = 0; i < PointsNumber; i++)
+            {
+                if ((_pointXBoxes[i].IsKeyboardFocused))
+                    _currentBox = i;
+                if (_pointYBoxes[i].IsKeyboardFocused)
+                    _currentBox = i;
+            }
+            StatusText.Text = _currentBox.ToString();
+        }
+
+        private double Min(double?[] arr)
+        {
+            var min = 1.7e308;
+            for(var i = 0; i < arr.Length; i++)
+                min = (double)arr[i] < min ? (double)arr[i] : min;
+            return min;
         }
     }
 }
