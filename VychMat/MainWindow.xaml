@@ -15,7 +15,7 @@
         <Button x:Name="FindCoefButton" HorizontalAlignment="Left" Margin="82,287,0,0" VerticalAlignment="Top" Width="109" Height="22" IsEnabled="False" Click="FindCoefButtonClick" Visibility="Hidden">
             <TextBlock Text="Найти коэффициенты интерполирующего полинома" FontWeight="Bold" Background="{x:Null}" FontSize="16" Width="170" />
         </Button>
-        <Button x:Name="RandomButton" Content="Случайные числа" HorizontalAlignment="Left" Margin="273,84,0,0" VerticalAlignment="Top" Width="162" Click="RandomButton_Click"/>
+        <Button x:Name="RandomButton" Content="Случайные числа" HorizontalAlignment="Left" Margin="273,84,0,0" VerticalAlignment="Top" Width="162" Click="RandomButtonClick"/>
 
 
         <dxc:ChartControl x:Name="Chart" HorizontalAlignment="Left" Margin="15,272,0,0" VerticalAlignment="Top" Height="300" Width="656">
@@ -23,7 +23,7 @@
                 <dxc:Legend Margin="10, 0, 0, 0"/>
             </dxc:ChartControl.Legend>
             <dxc:ChartControl.Diagram>
-                <dxc:XYDiagram2D x:Name="diagram" MouseDown="XYDiagram2D_MouseDown_1">
+                <dxc:XYDiagram2D x:Name="diagram" MouseDown="XyDiagram2DMouseDown1">
                     <dxc:XYDiagram2D.AxisY>
                         <dxc:AxisY2D>
                             <dxc:AxisY2D.Range>

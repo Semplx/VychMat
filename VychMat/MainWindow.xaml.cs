@@ -141,7 +141,6 @@ namespace VychMat
             diagram.AxisX.Range.MaxValue = 10;
             diagram.AxisY.Range.MinValue = -10;
             diagram.AxisY.Range.MaxValue = 10;
-            //SolutionBlock.Inlines.Clear();
             Chart.Diagram.Series[0].Points.Clear();
             Chart.Diagram.Series[1].Points.Clear();
             diagram.Series[2].Points.Clear();
@@ -162,7 +161,7 @@ namespace VychMat
                                     MessageBoxImage.Error);
                 }
             }
-            catch (FormatException exception)
+            catch (FormatException)
             {
                 MessageBox.Show("Введите целое число", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -170,7 +169,6 @@ namespace VychMat
 
         private void TextBoxTextChanged(object sender, TextChangedEventArgs e)
         {
-            //SolutionBlock.Inlines.Clear();
             Chart.Diagram.Series[0].Points.Clear();
             Chart.Diagram.Series[1].Points.Clear();
             try
@@ -187,10 +185,22 @@ namespace VychMat
                     _yValues[i] = value;
                 }
                 FindCoefButton.IsEnabled = true;
+                //var xAreEqual = false;
+                //foreach (var x in _xValues)
+                //{
+                //    foreach (var curx in _xValues)
+                //    {
+                //        if (curx != x) continue;
+                //        xAreEqual = true;
+                //        break;
+                //    }
+                //    if (xAreEqual) break;
+                //}
+                //if (!xAreEqual)
                 FindCoefButtonClick(this, e);
 
             }
-            catch (FormatException exception)
+            catch (FormatException)
             {
                 FindCoefButton.IsEnabled = false;
                 foreach (var c in _cLabels)
@@ -202,7 +212,6 @@ namespace VychMat
 
         private void FindCoefButtonClick(object sender, RoutedEventArgs e)
         {
-            //SolutionBlock.Inlines.Clear();
             var x = new double[PointsNumber, PointsNumber];
             var y = new double[PointsNumber];
             double[] c = null;
@@ -213,46 +222,37 @@ namespace VychMat
                 y[i] = (double)_yValues[i];
                 c = Gauss.Solve(x, y);
             }
-            var s = "";
-            for (var i = 0; i < PointsNumber; i++)
+            var isNaN = false;
+            foreach(var curc in c)
             {
-                c[i] = Math.Round(c[i], 3);
-                s = s + c[i].ToString() + " ";
+                if(double.IsNaN(curc) || double.IsInfinity(curc))
+                {
+                    isNaN = true;
+                    break;
+                }
             }
-            //var ff = new FontFamily("Palatino Linotype");
-            //var runs = new Run[PointsNumber];
-            //var ssruns = new Run[PointsNumber];
-            for (var i = 0; i < PointsNumber; i++)
+            if (!isNaN)
             {
-                //var symb = "";
-                //if (i != PointsNumber - 1 && c[i] >= 0)
-                //    symb = "+";
-                //var str = symb + c[i].ToString() + (i != 0 ? "x" : "");
-                //runs[i] = new Run(str)
-                //                {
-                //                    FontFamily = ff,
-                //                    FontSize = 24
-                //                };
-                //ssruns[i] = new Run(i > 1 ? i.ToString() : "")
-                //                {
-                //                    FontFamily = ff,
-                //                    FontSize = 24
-                //                };
-                //ssruns[i].Typography.Variants = FontVariants.Superscript;
-                _cLabels[i].Content = c[i].ToString();
-                
-
+                var s = "";
+                for (var i = 0; i < PointsNumber; i++)
+                {
+                    c[i] = Math.Round(c[i], 3);
+                    s = s + c[i].ToString() + " ";
+                }
+                for (var i = 0; i < PointsNumber; i++)
+                {
+                    _cLabels[i].Content = c[i].ToString();
+                }
+                Plot(c);
             }
-            //for(var i = PointsNumber - 1; i >= 0; i--)
-            //{
-            //    SolutionBlock.Inlines.Add(runs[i]);
-            //    SolutionBlock.Inlines.Add(ssruns[i]);
-            //}
-            //MessageBox.Show(s);
-            Plot(c);
+            else
+                foreach (var label in _cLabels)
+                {
+                    label.Content = "";
+                }
         }
 
-        private void RandomButton_Click(object sender, RoutedEventArgs e)
+        private void RandomButtonClick(object sender, RoutedEventArgs e)
         {
             var rnd = new Random();
             for(var i = 0; i < PointsNumber; i++)
@@ -317,13 +317,13 @@ namespace VychMat
             }
         }
 
-        private void XYDiagram2D_MouseDown_1(object sender, MouseButtonEventArgs e)
+        private void XyDiagram2DMouseDown1(object sender, MouseButtonEventArgs e)
         {
             var position = e.GetPosition(diagram);
             var dc = diagram.PointToDiagram(position);
-            var x = Math.Round(dc.NumericalArgument, 2);
-            var y = Math.Round(dc.NumericalValue, 2);
-            StatusText.Text = x.ToString() + " " + y.ToString();
+            var x = Math.Round(dc.NumericalArgument, 2) + 0.7;
+            var y = Math.Round(dc.NumericalValue, 2) - 1.5;
+            StatusText.Text = "Выбраны координаты: " + x.ToString() + " " + y.ToString();
             _pointXBoxes[_currentBox].Text = x.ToString();
             _pointYBoxes[_currentBox].Text = y.ToString();
             if(!_plotted)
@@ -341,15 +341,7 @@ namespace VychMat
                 if (_pointYBoxes[i].IsKeyboardFocused)
                     _currentBox = i;
             }
-            StatusText.Text = _currentBox.ToString();
-        }
-
-        private double Min(double?[] arr)
-        {
-            var min = 1.7e308;
-            for(var i = 0; i < arr.Length; i++)
-                min = (double)arr[i] < min ? (double)arr[i] : min;
-            return min;
+            StatusText.Text = "Выбрана точка " + _currentBox.ToString();
         }
     }
 }

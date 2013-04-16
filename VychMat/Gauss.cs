@@ -6,8 +6,16 @@ using System.Threading.Tasks;
 
 namespace VychMat
 {
+    /// <summary>
+    /// Решение СЛАУ методом Гаусса
+    /// </summary>
     public static class Gauss
     {
+        /// <summary>
+        /// Прямой ход
+        /// </summary>
+        /// <param name="a">Матрица коэффициентов</param>
+        /// <param name="b">Матрица свободных членов</param>
         static void ForwardWay(double[,] a, double[]b)
         {
             double v;
@@ -48,6 +56,12 @@ namespace VychMat
             }
         }
 
+        /// <summary>
+        /// Обратный ход
+        /// </summary>
+        /// <param name="a">Матрица коэффициентов</param>
+        /// <param name="b">Матрица свободных членов</param>
+        /// <returns>Матрица неизвестных</returns>
         static double[] BackwardWay(double[,] a, double[] b)
         {
             var n = b.Length;
@@ -66,6 +80,12 @@ namespace VychMat
             return x;
         }
 
+        /// <summary>
+        /// Решение системы уравлений
+        /// </summary>
+        /// <param name="a">Матрица коэффициентов</param>
+        /// <param name="b">Матрица свободных членов</param>
+        /// <returns>Матрица неизвестных</returns>
         public static double[] Solve(double[,] a, double[] b)
         {
             var am = (double[,])a.Clone();
