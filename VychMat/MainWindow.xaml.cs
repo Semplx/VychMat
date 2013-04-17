@@ -66,7 +66,6 @@ namespace VychMat
                              HorizontalAlignment = HorizontalAlignment.Left,
                              VerticalAlignment = VerticalAlignment.Top,
                              Content="",
-                             //FontSize = 14,
                              FontWeight = FontWeights.Bold
 
                          };
@@ -185,18 +184,6 @@ namespace VychMat
                     _yValues[i] = value;
                 }
                 FindCoefButton.IsEnabled = true;
-                //var xAreEqual = false;
-                //foreach (var x in _xValues)
-                //{
-                //    foreach (var curx in _xValues)
-                //    {
-                //        if (curx != x) continue;
-                //        xAreEqual = true;
-                //        break;
-                //    }
-                //    if (xAreEqual) break;
-                //}
-                //if (!xAreEqual)
                 FindCoefButtonClick(this, e);
 
             }
@@ -236,12 +223,12 @@ namespace VychMat
                 var s = "";
                 for (var i = 0; i < PointsNumber; i++)
                 {
-                    c[i] = Math.Round(c[i], 3);
-                    s = s + c[i].ToString() + " ";
+                    //c[i] = Math.Round(c[i], 3);
+                    s = s + Math.Round(c[i], 3).ToString() + " ";
                 }
                 for (var i = 0; i < PointsNumber; i++)
                 {
-                    _cLabels[i].Content = c[i].ToString();
+                    _cLabels[i].Content = Math.Round(c[i], 3).ToString();
                 }
                 Plot(c);
             }
@@ -305,7 +292,7 @@ namespace VychMat
             }
             var step = (maxX - minX)/30;
             var px = minX;
-            for (var i = 0; i < 30; i++)
+            for (var i = 0; i < 31; i++)
             {
                 double py = 0;
                 for (var j = 0; j < PointsNumber; j++)
